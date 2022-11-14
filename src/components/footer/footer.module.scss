@@ -1,0 +1,32 @@
+@import '~@nevermined-io/styles/lib/cjs/styles/index.scss';
+
+.footer {
+  padding: $size---padding;
+  padding-bottom: 0;
+
+  &__content {
+    border-top: 1px solid gc(gM);
+    padding: $size---padding;
+    justify-content: unset;
+
+    &--secondary {
+      border-top-color: gc(gD);
+    }
+  }
+
+  &__link-row {
+    justify-content: center;
+  }
+
+  &__link-column {
+    width: 33.3%;
+
+    &--middle {
+      justify-content: center;
+    }
+
+    &--last {
+      justify-content: flex-end;
+    }
+  }
+}

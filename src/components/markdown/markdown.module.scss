@@ -1,0 +1,43 @@
+@import '~@nevermined-io/styles/lib/cjs/styles/index.scss';
+
+.markdown {
+  @include component;
+  font-family: 'Titillium Web';
+  margin: 20px 0;
+
+  &__header {
+    background: #13122b;
+    position: relative;
+    cursor: pointer;
+    padding: 18px;
+
+    img {
+      align-self: center;
+      margin-right: 10px;
+    }
+  }
+
+  &__header-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  &__copy-text {
+    color: #67cff9;
+    vertical-align: middle;
+  }
+
+  &__content {
+    background: #1c4263;
+  }
+
+  &__snippet {
+    color: #8aaabe;
+    position: relative;
+    font-size: 18px;
+    word-break: break-word;
+    padding: 16px;
+    gap: 8px;
+  }
+}

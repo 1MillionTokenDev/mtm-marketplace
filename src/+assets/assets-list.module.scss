@@ -1,0 +1,272 @@
+@import '~@nevermined-io/styles/lib/cjs/styles/index.scss';
+
+.assets-list {
+  font-family: 'Titillium Web';
+  margin-top: 32px;
+
+  &__bookmark {
+    text-align: center;
+    height: 100%;
+    max-width: 22px;
+    background: #2b465c;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    padding: 7px;
+    transition: max-width 0.5s;
+    overflow: hidden;
+
+    &--remove {
+      font-size: 20px;
+    }
+  }
+
+  &__bookmark-col {
+    cursor: pointer;
+    color: #67cff9;
+    background: #2b465c;
+    text-align: center;
+    width: 22px;
+    padding: 0 7px;
+    align-self: stretch;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+
+    &:hover {
+      .assets-list__bookmark {
+        width: auto;
+        max-width: 100px;
+      }
+    }
+
+    &--add {
+      &:hover {
+        width: 60px;
+      }
+    }
+
+    &--remove {
+      &:hover {
+        width: 90px;
+      }
+    }
+  }
+
+  &__bookmark-text {
+    color: #fff;
+    font-size: 14px;
+    margin-left: 10px;
+  }
+
+  &__heading {
+    margin-bottom: 32px;
+  }
+  &__batch-select-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  &__batch-select {
+    background: gc(gM);
+    height: 34px;
+    width: 132px;
+    padding: 10px;
+    position: relative;
+  }
+  &__batch-select-inactive {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: gc(gM);
+    height: 34px;
+    padding: 8px;
+    width: 132px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  &__batch-checkbox {
+    /* For some reason the checkbox appears ~2px down if I don't set position to absolute. Feel free to investigate if
+    you have time. */
+    position: absolute;
+    cursor: pointer;
+  }
+  &__selected-count {
+    position: absolute;
+    left: 32px;
+    font-size: 14px;
+    b {
+      font-weight: bold;
+    }
+  }
+  &__batch-close {
+    position: absolute;
+    left: 113px;
+    top: 11px;
+    cursor: pointer;
+  }
+  &__basket-add {
+    color: gc(sM);
+    cursor: pointer;
+    margin-left: 16px;
+  }
+
+  &__asset-title-col {
+    cursor: pointer;
+    padding: 5px;
+  }
+
+  &__asset-title {
+    display: flex;
+    align-items: center;
+  }
+
+  &__asset-date {
+    margin-left: 22px;
+  }
+
+  &__asset-type {
+    display: flex;
+  }
+
+  &__asset {
+    position: relative;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 0 0 0 20px;
+    height: 72px;
+
+    &--asset-row-header {
+      border-bottom: none;
+      border-left: none;
+      border-right: none;
+    }
+  }
+
+  &__subscription-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__subscription-row {
+    display: flex;
+    align-items: stretch;
+  }
+
+  &__info {
+    cursor: pointer;
+    padding: 0 20px;
+    min-width: 10%;
+
+    &--indexer {
+      padding: 0;
+      border: none;
+      display: flex;
+    }
+
+    &--info-header {
+      display: flex;
+    }
+
+    &--subscription {
+      display: flex;
+      flex-grow: 1;
+      justify-content: space-evenly;
+      border-left: 2px solid #2b465c;
+      padding: 0 0 0 20px;
+    }
+
+    &--icon {
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+  }
+
+  &__subscription-border {
+    border-left: 2px solid #2b465c;
+    padding-right: 20px;
+  }
+
+  &__category-row {
+    display: flex;
+    align-items: center;
+  }
+
+  &__checkbox {
+    margin-right: 22px;
+    cursor: pointer;
+
+    &--hidden {
+      display: none;
+    }
+  }
+
+  &__icon {
+    &--clickable {
+      cursor: pointer;
+    }
+
+    &--network,
+    &--dataset,
+    &--folder {
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+  }
+
+  &__dash {
+    margin: 5px;
+  }
+
+  &__subscription-badge {
+    margin-right: 10px;
+  }
+
+  &__table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    width: 100%;
+
+    tr,
+    td,
+    th {
+      height: 100%;
+    }
+
+    tr {
+      position: relative;
+    }
+
+    td {
+      border-width: 2px 0;
+      border-color: gc(gM);
+      border-style: solid;
+      vertical-align: middle;
+      padding: 18px 15px;
+
+      &:first-child {
+        border-left-width: 2px;
+      }
+
+      &:last-child {
+        border-right-width: 2px;
+      }
+    }
+
+    &__header,
+    &__column {
+      text-align: left;
+      padding: 0 10px 20px 20px;
+
+      &--indexer {
+        max-width: 50%;
+      }
+
+      &--bookmark {
+        width: 22px;
+        padding: 0 !important;
+      }
+    }
+  }
+}
