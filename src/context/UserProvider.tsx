@@ -44,8 +44,6 @@ const UserProvider = (props: UserProviderProps) => {
   const { walletAddress, isAvailable, checkIsLogged } = useContext(MetaMask.WalletContext)
   const userProviderMounted = useRef()
   const [dropdownFilters, setDropDownFilters] = useState<DropDownFilters>({
-    selectedNetworks: [],
-    selectedSubtypes: [],
     fromDate: '',
     toDate: ''
   })
@@ -149,12 +147,10 @@ const UserProvider = (props: UserProviderProps) => {
 
   const applyDropdownFilters = useCallback(() => {
     setDropDownFilters({
-      selectedNetworks,
-      selectedSubtypes,
       fromDate,
       toDate
     })
-  }, [selectedNetworks, selectedSubscriptions, selectedSubtypes, fromDate, toDate])
+  }, [fromDate, toDate])
 
   const clearDropdownFilters = useCallback(() => {
     const dropdownFilters = {

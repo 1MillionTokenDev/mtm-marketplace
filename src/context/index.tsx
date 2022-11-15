@@ -11,8 +11,6 @@ export type SubscriptionTier = {
 }
 
 export type DropDownFilters = {
-  selectedNetworks: string[]
-  selectedSubtypes: string[]
   fromDate: string
   toDate: string
 }

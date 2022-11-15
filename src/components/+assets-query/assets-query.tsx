@@ -39,7 +39,7 @@ export function XuiAssetsQuery({
     bookmarks,
     dropdownFilters
   } = useContext(User)
-  const { selectedNetworks, selectedSubtypes, fromDate, toDate } =
+  const { fromDate, toDate } =
     dropdownFilters
   const { sdk } = Catalog.useNevermined()
   const { walletAddress } = MetaMask.useWallet()
@@ -48,7 +48,6 @@ export function XuiAssetsQuery({
   const [loading, setLoading] = useState<boolean>(false)
 
   const selectedCategoriesEvent = selectedCategories.map((cat) => `${subcategoryPrefix}:${cat}`)
-  const selectedNetworkEvent = selectedNetworks.map((cat) => `${networkPrefix}:${cat}`)
 
   const textFilter = {
     query_string: { query: `*${searchInputText}*`, fields: ['service.attributes.main.name'] }
@@ -59,20 +58,8 @@ export function XuiAssetsQuery({
         selectedCategoriesEvent.length === 0 ? 'defi-datasets' : selectedCategoriesEvent.join(', ')
     }
   }
-  const datasetNetwork = {
-    match: {
-      'service.attributes.additionalInformation.blockchain':
-        selectedNetworkEvent.length === 0 ? '' : selectedNetworks.join(', ')
-    }
-  }
+  
   const nftAccess = { match: { 'service.type': 'nft-access' } }
-
-  const datasetAssetType = {
-    match: {
-      'service.attributes.additionalInformation.customData.subtype':
-        selectedSubtypes.length === 0 ? '' : selectedSubtypes.join(', ')
-    }
-  }
 
   const dateFilter = fromDate !== '' &&
     toDate !== '' && {
@@ -88,9 +75,7 @@ export function XuiAssetsQuery({
   // add listed into mustArray once we have a dataset with that property in the metadata
   //  const listed = { match: { 'service.attributes.curation.isListed': 'true' } }
   const mustArray = [textFilter, datasetCategory, nftAccess]
-  selectedNetworkEvent.length > 0 && mustArray.push(datasetNetwork as any)
   dateFilter && mustArray.push(dateFilter as any)
-  selectedSubtypes.length > 0 && mustArray.push(datasetAssetType as any)
 
   const notBundleFilter = {
     match: { 'service.attributes.additionalInformation.categories': 'EventType:bundle' }
@@ -143,11 +128,6 @@ export function XuiAssetsQuery({
             ? setSelectedCategories(value.split(','))
             : setSelectedCategories(selectedCategories)
           break
-        case 'selectedNetworks':
-          queryParams.get('selectedNetworks')
-            ? setSelectedNetworks(value.split(','))
-            : setSelectedNetworks(selectedNetworks)
-          break
         case 'toDate':
           queryParams.get('toDate') ? setToDate(value) : setToDate(toDate)
           break
@@ -185,7 +165,7 @@ export function XuiAssetsQuery({
         history.replaceState(
           null,
           '',
-          `/list?searchInputText=${searchInputText}&fromDate=${fromDate}&toDate=${toDate}&selectedCategories=${selectedCategories}&selectedNetworks=${selectedNetworks}`
+          `/list?searchInputText=${searchInputText}&fromDate=${fromDate}&toDate=${toDate}&selectedCategories=${selectedCategories}`
         )
       })
   }, [sdk, page, JSON.stringify(query), bookmarks])

@@ -23,7 +23,7 @@ export function XuiSearchBar({ onSearch }: SearchBarProps) {
     dropdownFilters,
     clearDropdownFilters
   } = useContext(User)
-  const { selectedNetworks, selectedSubtypes, fromDate, toDate } =
+  const { fromDate, toDate } =
     dropdownFilters
 
   const [textValue, setTextValue] = useState('')
@@ -61,8 +61,6 @@ export function XuiSearchBar({ onSearch }: SearchBarProps) {
       <UiDivider />
       <UiLayout type="sides" justify="end">
         {(selectedCategories.length ||
-          selectedNetworks.length > 0 ||
-          selectedSubtypes.length > 0 ||
           fromDate ||
           toDate) && (
           <div onClick={resetCategories} className={b('clear-div')}>
@@ -95,11 +93,11 @@ export function XuiSearchBar({ onSearch }: SearchBarProps) {
         </UiDropdown>
         <UiDropdown
           selected={
-            fromDate || toDate || selectedNetworks.length
+            fromDate || toDate
               ? true
               : false
               ? true
-              : false || selectedSubtypes.length
+              : false
               ? true
               : false
           }

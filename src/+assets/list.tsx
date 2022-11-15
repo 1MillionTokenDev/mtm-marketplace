@@ -15,7 +15,7 @@ export const List: NextPage = () => {
         <UiBanner showButton={false} />
         <UiLayout>
           <UiText type="h3" wrapper="h2">
-            Browse DeFi Reports
+            Find your favorite NFT
           </UiText>
         </UiLayout>
 
