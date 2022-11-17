@@ -2,11 +2,11 @@
 // NEVERMINED REMOTE CONNECTIONS
 //
 export const marketplaceUri = process.env.NEXT_PUBLIC_MARKETPLACE_API || 'http://localhost:3100' // next redirections on next.config.js
-export const gatewayUri = process.env.NEXT_PUBLIC_GATEWAY_URI || 'https://gateway.mumbai.public.nevermined.network' // next redirections on next.config.js
+export const neverminedNodeUri = process.env.NEXT_PUBLIC_NEVERMINED_NODE_URI || 'https://node.mumbai.public.nevermined.network' // next redirections on next.config.js
 export const faucetUri = '/api/faucet' // next redirections on next.config.js
-export const gatewayAddress =
-  process.env.NEXT_PUBLIC_GATEWAY_ADDRESS || '0x5838B5512cF9f12FE9f2beccB20eb47211F9B0bc'
-export const nodeUri = process.env.NEXT_PUBLIC_NODE_URI || 'https://matic-mumbai.chainstacklabs.com'
+export const neverminedNodeAddress =
+  process.env.NEXT_PUBLIC_NEVERMINED_NODE_ADDRESS || '0x5838B5512cF9f12FE9f2beccB20eb47211F9B0bc'
+export const webProviderUri = process.env.NEXT_PUBLIC_WEB_PROVIDER_URI || 'https://matic-mumbai.chainstacklabs.com'
 export const secretStoreUri = process.env.NEXT_PUBLIC_SECRET_STORE_URI || 'http://localhost:12001'
 export const artifactsFolder =
   process.env.NEXT_PUBLIC_ARTIFACTS_FOLDER_URL || `http://localhost:3000/artifacts`

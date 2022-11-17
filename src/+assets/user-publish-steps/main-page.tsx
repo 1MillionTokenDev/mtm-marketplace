@@ -13,7 +13,9 @@ import {
   AssetFile,
   AssetService,
   RoyaltyKind,
-  getRoyaltyScheme
+  getRoyaltyScheme,
+  AssetRewards,
+  BigNumber
 } from '@nevermined-io/catalog-core'
 import { NextPage } from 'next'
 import { MetaData } from '@nevermined-io/nevermined-sdk-js'
@@ -22,7 +24,7 @@ import { DetailsStep } from './details'
 import { FilesStep } from './files'
 import { handleAssetFiles, FileType } from './files-handler'
 import { toast } from '../../components'
-import { gatewayAddress, NFT_TIERS } from 'src/config'
+import { neverminedNodeAddress } from 'src/config'
 import { ProgressBar } from './progress-bar/progress-bar'
 import styles from './publish-asset.module.scss'
 
@@ -35,7 +37,7 @@ export const UserPublishMultiStep: NextPage = () => {
     setAssetMessage,
     assetPublish,
     setAssetPublish,
-    publishNFT721
+    publishNFT1155
   } = AssetService.useAssetPublish()
   const [filesUploadedMessage, setFilesUploadedMessage] = useState<string[]>([])
   const popupRef = useRef<UiPopupHandlers>()
@@ -187,10 +189,6 @@ export const UserPublishMultiStep: NextPage = () => {
     return metadata
   }
 
-  const getNftTierAddress = (): string => {
-    return NFT_TIERS.find((tier) => tier.name === assetPublish.tier)?.address || ''
-  }
-
   const generateFilesUploadedMessage = (assetFiles: AssetFile[]) => {
     const messages: string[] = []
     for (const assetFile of assetFiles) {
@@ -225,11 +223,13 @@ export const UserPublishMultiStep: NextPage = () => {
         amount: 0
       }
 
-      publishNFT721({
-        nftAddress: getNftTierAddress(),
+      publishNFT1155({
         metadata: generateMetadata(),
-        providers: [gatewayAddress],
-        royaltyAttributes: royaltyAttributes
+        neverminedNodeAddress,
+        assetRewards: new AssetRewards(),
+        royaltyAttributes: royaltyAttributes,
+        preMint: true,
+        cap: BigNumber.from(100),
       })
         .then(() => {
           setResultOk(true)

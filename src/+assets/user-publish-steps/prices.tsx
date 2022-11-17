@@ -55,20 +55,9 @@ export const PricesStep = (props: PricesProps) => {
   const confirmPopupMessage = 'Press Confirm to Publish the new Asset'
   const confirmPopupRef = useRef<UiPopupHandlers>()
   const [showForm, setShowForm] = useState(true)
-  const { userSubscriptions, getCurrentUserSubscription } = useContext(User)
   const [tiers, setTiers] = useState<string[]>([])
   const subscriptionErrorText =
     "You don't have any current subscription. Only users with a subscription are allowed to publish"
-
-  useEffect(() => {
-    if (!getCurrentUserSubscription()) {
-      setInputError(subscriptionErrorText)
-      setTiers([])
-      return
-    }
-
-    setTiers(userSubscriptions.filter((s) => s.access == true).map((s) => s.tier.toString()))
-  }, [userSubscriptions])
 
   useEffect(() => {
     if (isProcessing == true) {
@@ -91,10 +80,6 @@ export const PricesStep = (props: PricesProps) => {
   }
 
   const showConfirm = () => {
-    if (!getCurrentUserSubscription()) {
-      toast.error(subscriptionErrorText)
-      return
-    }
     confirmPopupRef.current?.open()
   }
 

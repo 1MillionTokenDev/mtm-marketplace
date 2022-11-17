@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { MetaMask } from '@nevermined-io/catalog-providers'
+import { WagmiCore } from '@nevermined-io/catalog-providers'
 import { ethers } from 'ethers'
 import { User } from '../../context'
 
@@ -18,7 +18,7 @@ class TokenNameGetter {
     }
   }
 
-  static async getSymbol(provider: MetaMask.MetamaskProvider, address?: string) {
+  static async getSymbol(provider: WagmiCore.Provider, address?: string) {
     if (!address) {
       return;
     }
@@ -53,7 +53,7 @@ export const XuiTokenName = React.memo(function({address}: TokenNameProps) {
     if (instantSymbol !== undefined) {
       return
     }
-    TokenNameGetter.getSymbol(window.ethereum)
+    TokenNameGetter.getSymbol(window.ethereum as any)
       .then((_: any) => _ ? setToken(_) : setToken(tokenSymbol))
   }, [address])
 

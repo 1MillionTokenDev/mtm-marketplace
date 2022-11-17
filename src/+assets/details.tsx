@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { DDO } from '@nevermined-io/nevermined-sdk-js'
 import { Catalog } from '@nevermined-io/catalog-core'
-import { MetaMask } from '@nevermined-io/catalog-providers'
+import { useWallet, ConnectKit } from '@nevermined-io/catalog-providers'
 import styles from './details.module.scss'
 import {
   BEM,
@@ -25,8 +25,6 @@ import {
   calculateStartEndPage,
   calculatePages,
   getDefiInfo,
-  getDdoSubscription,
-  DDOSubscription
 } from 'src/shared'
 import { Markdown } from 'ui/markdown/markdown'
 import Image from 'next/image'
@@ -56,14 +54,13 @@ export const AssetDetails: NextPage = () => {
   const [ownAsset] = useState(false)
   const { isLogged } = useContext(User)
   const { assets, sdk } = Catalog.useNevermined()
-  const { getProvider, loginMetamask, switchChainsOrRegisterSupportedChain } = MetaMask.useWallet()
+  const { client, walletAddress, getStatus } = useWallet()
   const popupRef = createRef<UiPopupHandlers>()
   const downloadPopupRef = useRef<UiPopupHandlers>()
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(true)
   const [provenance, setProvenance] = useState<NftProvenance[]>([])
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
-  const { walletAddress } = MetaMask.useWallet()
   const [errorMessage, setErrorMessage] = useState('')
   const [assetDid, setAssetDid] = useState<string>('')
 
@@ -77,7 +74,8 @@ export const AssetDetails: NextPage = () => {
   }, [page])
 
   const getProvenanceInfo = async () => {
-    const events: any = await loadAssetProvenance(sdk, getProvider(), String(did))
+    const provider = await client.getProvider()
+    const events: any = await loadAssetProvenance(sdk, provider, String(did))
     const nftProvenance: NftProvenance[] = events.map((event: any) => {
       return {
         id: event.id,
@@ -90,7 +88,7 @@ export const AssetDetails: NextPage = () => {
     setProvenance(nftProvenance)
   }
 
-  const downloadAsset = async (did: string, subscription: DDOSubscription) => {
+  const downloadAsset = async (did: string) => {
     setAssetDid(did)
     downloadPopupRef.current?.open()
   }
@@ -125,11 +123,11 @@ export const AssetDetails: NextPage = () => {
       }
     }
 
-    window?.ethereum?.on('chainChanged', checkNetworkAndSetState)
+    (window?.ethereum as any)?.on('chainChanged', checkNetworkAndSetState)
 
     //remove the event
     return () => {
-      window?.ethereum?.removeListener('chainChanged', checkNetworkAndSetState)
+      (window?.ethereum as any)?.removeListener('chainChanged', checkNetworkAndSetState)
     }
   }, [])
 
@@ -163,17 +161,6 @@ export const AssetDetails: NextPage = () => {
             <UiText style={{ padding: '10px' }} alert>
               Please, switch to {correctNetworkName} to see the details
             </UiText>
-            <UiButton
-              style={{
-                margin: '10px',
-                padding: '10px',
-                background: '#2E405A',
-                textTransform: 'none'
-              }}
-              onClick={async () => await switchChainsOrRegisterSupportedChain()}
-            >
-              switch to {correctNetworkName} network
-            </UiButton>
           </>
         ) : asset === false ? (
           <UiText style={{ padding: '10px' }} alert>
@@ -191,7 +178,6 @@ export const AssetDetails: NextPage = () => {
   }
   const metadata = asset.findServiceByType('metadata').attributes
   const defi = getDefiInfo(metadata)
-  const subscription = getDdoSubscription(asset)
 
   return (
     <>
@@ -498,21 +484,20 @@ export const AssetDetails: NextPage = () => {
                       <Link href="/profile">see in your bundle</Link>
                     </span>
                   </UiText>
-                ) : (
+                ) : 
+                   getStatus() === 'connected' ?
+                   <ConnectKit.ConnectKitButton/>
+                   :
                   <UiButton
                     cover
                     onClick={() => {
-                      if (!isConnected) {
-                        loginMetamask()
-                        return
-                      }
-
-                      downloadAsset(asset.id, subscription )
+                      downloadAsset(asset.id )
                     }}
                   >
                     {isConnected ? 'Download' : 'Connect Wallet'}
                   </UiButton>
-                )}
+                  
+                }
               </div>
             </UiLayout>
           </div>

@@ -32,26 +32,10 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
   const [descriptionInputError, setDescriptionInputError] = useState('')
   const [subscriptionInputError, setSubscriptionInputError] = useState('')
 
-  const { userSubscriptionsStatus, userSubscriptions, getCurrentUserSubscription } =
-    useContext(User)
   const [tiers, setTiers] = useState<string[]>([])
   const subscriptionErrorText =
     "You don't have any current subscription. Only users with a subscription are allowed to publish"
   const { isLoadingSDK } = Catalog.useNevermined()
-
-  useEffect(() => {
-    if (
-      !userSubscriptionsStatus.isLoading &&
-      userSubscriptionsStatus.hasLoaded &&
-      !getCurrentUserSubscription()
-    ) {
-      setSubscriptionInputError(subscriptionErrorText)
-      setTiers([])
-      return
-    }
-
-    setTiers(userSubscriptions.filter((s) => s.access == true).map((s) => s.tier.toString()))
-  }, [isLoadingSDK, userSubscriptions])
 
   const checkValues = (): boolean => {
     if (!assetPublish.author) {
@@ -74,11 +58,6 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
 
   const handleContinueClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    if (!getCurrentUserSubscription()) {
-      toast.error(subscriptionErrorText)
-      return
-    }
 
     if (!checkValues()) return
 

@@ -5,9 +5,9 @@ import styles from './account.module.scss'
 import { UserProfile } from './user-profile'
 import { User } from '../context'
 import { Catalog } from '@nevermined-io/catalog-core'
-import { MetaMask } from '@nevermined-io/catalog-providers'
+import { useWallet } from '@nevermined-io/catalog-providers'
 import { DDO } from '@nevermined-io/nevermined-sdk-js'
-import { loadUserPublished, loadUserDownloads, getUserSubscription } from 'src/shared/graphql'
+import { loadUserPublished, loadUserDownloads } from 'src/shared/graphql'
 import { Summary } from 'ui/+account/summary'
 import { AssetsList } from './assets-list'
 import Router from 'next/router'
@@ -21,7 +21,7 @@ export const Account: NextPage = () => {
   const { bookmarks, setBookmarks } =
     useContext(User)
   const { sdk } = Catalog.useNevermined()
-  const { walletAddress } = MetaMask.useWallet()
+  const { walletAddress } = useWallet()
 
   const loadUserInfo = async () => {
     try{

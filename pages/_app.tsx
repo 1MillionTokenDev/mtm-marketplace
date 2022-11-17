@@ -5,7 +5,7 @@ import React from 'react'
 import Head from 'next/head'
 import type { AppProps } from 'next/app'
 import { Catalog, AuthToken, AssetService } from '@nevermined-io/catalog-core'
-import { MetaMask } from '@nevermined-io/catalog-providers'
+import { WalletProvider, getClient } from '@nevermined-io/catalog-providers'
 import { Logger } from '@nevermined-io/nevermined-sdk-js'
 import { ethers } from 'ethers'
 import { UiHeader, UiHeaderLink, UiFooter } from 'ui'
@@ -13,17 +13,16 @@ import { UiDivider } from '@nevermined-io/styles'
 import UserProvider from '../src/context/UserProvider'
 import {
   marketplaceUri,
-  gatewayUri,
-  gatewayAddress,
+  neverminedNodeUri,
+  neverminedNodeAddress,
   faucetUri,
-  nodeUri,
+  webProviderUri,
   secretStoreUri,
   verbose,
   graphUrl,
   artifactsFolder,
   correctNetworkId
 } from 'src/config'
-import chainConfig from 'src/chainConfig'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import '../src/components/toast/toast.scss'
@@ -32,12 +31,12 @@ const appConfig = {
   web3Provider:
     typeof window !== 'undefined'
       ? window?.ethereum
-      : new ethers.providers.JsonRpcProvider(nodeUri),
-  nodeUri,
+      : new ethers.providers.JsonRpcProvider(webProviderUri),
+  webProviderUri,
   marketplaceUri,
-  gatewayUri,
+  neverminedNodeUri,
   faucetUri,
-  gatewayAddress,
+  neverminedNodeAddress,
   secretStoreUri,
   verbose,
   marketplaceAuthToken:
@@ -64,10 +63,8 @@ function App({ Component, pageProps }: AppProps) {
         pauseOnHover
       />
       <Catalog.NeverminedProvider config={appConfig}>
-        <MetaMask.WalletProvider
-          externalChainConfig={chainConfig}
-          nodeUri={appConfig.nodeUri}
-          correctNetworkId={correctNetworkId}
+        <WalletProvider
+          client={getClient()}
         >
           <AssetService.AssetPublishProvider>
             <UserProvider>
@@ -88,7 +85,7 @@ function App({ Component, pageProps }: AppProps) {
               <UiFooter />
             </UserProvider>
           </AssetService.AssetPublishProvider>
-        </MetaMask.WalletProvider>
+        </WalletProvider>
       </Catalog.NeverminedProvider>
     </div>
   )

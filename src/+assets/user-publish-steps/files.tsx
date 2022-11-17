@@ -75,7 +75,6 @@ export const FilesStep = (props: FilesProps) => {
   const subscriptionErrorText =
     "You don't have any current subscription. Only users with a subscription are allowed to publish"
   const assetOkMessage = 'Your Asset has been sucessfully Published'
-  const { getCurrentUserSubscription } = useContext(User)
 
   useEffect(() => {
     if (isProcessing) {
@@ -156,10 +155,6 @@ export const FilesStep = (props: FilesProps) => {
   const showConfirm = () => {
     if (!checkValues()) return
 
-    if (!getCurrentUserSubscription()) {
-      toast.error(subscriptionErrorText)
-      return
-    }
     confirmPopupRef.current?.open()
   }
 

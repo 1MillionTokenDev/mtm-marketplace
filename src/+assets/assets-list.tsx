@@ -9,11 +9,11 @@ import {
   UiPopupHandlers,
   NotificationPopup
 } from '@nevermined-io/styles'
-import { toDate, getDefiInfo, getDdoSubscription, DDOSubscription } from '../shared'
+import { toDate, getDefiInfo } from '../shared'
 import styles from './assets-list.module.scss'
 import { User } from '../context'
 import { Catalog } from '@nevermined-io/catalog-core'
-import { MetaMask } from '@nevermined-io/catalog-providers'
+import { useWallet } from '@nevermined-io/catalog-providers'
 import { XuiDownloadAsset } from '../components/+download-asset/download-asset'
 import { toast } from '../components'
 
@@ -38,7 +38,7 @@ export function AssetsList({
     bookmarks,
     setBookmarks,
   } = useContext(User)
-  const { walletAddress } = MetaMask.useWallet()
+  const { walletAddress } = useWallet()
   const { sdk, account } = Catalog.useNevermined()
   const [userProfile, setUserProfile] = useState<Profile>({} as Profile)
   const [errorMessage, setErrorMessage] = useState('')
@@ -193,9 +193,8 @@ export function AssetsList({
             .map((data) => ({
               ...data,
               defi: getDefiInfo(data.metadata),
-              subscription: getDdoSubscription(data.asset)
             }))
-            .map(({ asset, metadata, defi, subscription }, i) => {
+            .map(({ asset, metadata, defi }, i) => {
               const isBookmarked = bookmarks.some((bookmark) => bookmark.id === asset.id)
 
               return (

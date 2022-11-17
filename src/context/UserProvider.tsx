@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState, useRef, ReactNode, useCallback } from 'react'
 import { DDO } from '@nevermined-io/nevermined-sdk-js'
-import { MetaMask } from '@nevermined-io/catalog-providers'
+import { useWallet } from '@nevermined-io/catalog-providers'
 import { Catalog, AuthToken } from '@nevermined-io/catalog-core'
 import { User, DropDownFilters } from '.'
 import { correctNetworkName } from '../config'
 
 import {
-  gatewayUri,
+  neverminedNodeUri,
   marketplaceUri,
-  gatewayAddress,
+  neverminedNodeAddress,
   faucetUri,
   secretStoreUri,
   verbose,
@@ -41,7 +41,7 @@ const UserProvider = (props: UserProviderProps) => {
   const [selectedSubtypes, setSelectedSubtypes] = useState<string[]>([])
   const [selectedPrice, setSelectedPrice] = useState<number>(0)
   const { sdk, updateSDK, isLoadingSDK } = Catalog.useNevermined()
-  const { walletAddress, isAvailable, checkIsLogged } = useContext(MetaMask.WalletContext)
+  const { walletAddress, getStatus } = useWallet()
   const userProviderMounted = useRef()
   const [dropdownFilters, setDropDownFilters] = useState<DropDownFilters>({
     fromDate: '',
@@ -55,13 +55,15 @@ const UserProvider = (props: UserProviderProps) => {
 
     (async () => {
       if (userProviderMounted) {
-        window?.ethereum?.on('accountsChanged', async () => {
+        (window?.ethereum as any)?.on('accountsChanged', async () => {
           fetchBalance()
         })
 
-        window?.ethereum?.on('chainChanged', async () => {
-          await reloadSdk()
-        })
+        if ((window?.ethereum as any)?.on) {
+          (window?.ethereum as any)?.on('chainChanged', async () => {
+            await reloadSdk()
+          })
+        }
       }
     })()
   }, [isLoadingSDK, network])
@@ -77,15 +79,15 @@ const UserProvider = (props: UserProviderProps) => {
   }, [sdk])
 
   useEffect(() => {
-    if (!isAvailable()) {
+    if (getStatus() === 'disconnected') {
       setIsLogged(false)
       return
     }
 
     (async () => {
-      const isLoggedState = await checkIsLogged()
-      setIsLogged(isLoggedState)
-      if (isLoggedState) {
+      const isLoggedState = getStatus()
+      setIsLogged(isLoggedState === 'connected')
+      if (isLoggedState === 'connected') {
         await loadNevermined()
       }
     })()
@@ -96,9 +98,9 @@ const UserProvider = (props: UserProviderProps) => {
       web3Provider: window.ethereum,
       nodeUri: network,
       marketplaceUri,
-      gatewayUri,
+      neverminedNodeUri,
       faucetUri,
-      gatewayAddress,
+      neverminedNodeAddress,
       secretStoreUri,
       verbose,
       marketplaceAuthToken: AuthToken.fetchMarketplaceApiTokenFromLocalStorage().token || '',
