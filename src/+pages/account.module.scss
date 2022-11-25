@@ -1,4 +1,5 @@
 @import '~@nevermined-io/styles/lib/cjs/styles/index.scss';
+@import '../styles/variables';
 
 .account {
   @include component;
@@ -39,7 +40,7 @@
 
   &__pointer {
     &--active {
-      color: #FEFEFE;
+      color: $active;
     }
     cursor: pointer;
   }

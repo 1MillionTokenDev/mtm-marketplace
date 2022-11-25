@@ -4,10 +4,9 @@ import { UiText, UiLayout } from '@nevermined-io/styles'
 import { XuiAssetsQuery } from 'ui'
 import { AssetsList } from './assets-list'
 import { UiBanner } from 'ui/banner/banner'
-import Router from 'next/router'
 
 export const List: NextPage = () => {
-  const renderAssets = useCallback((assets) => <AssetsList assets={assets} />, [])
+  const renderAssets = useCallback((assets) => <AssetsList/>, [])
 
   return (
     <>

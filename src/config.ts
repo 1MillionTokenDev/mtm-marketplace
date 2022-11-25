@@ -13,6 +13,8 @@ export const artifactsFolder =
 
 export const NETWORK_BLOCK_INTERVAL = process.env.NEXT_PUBLIC_NETWORK_BLOCK_INTERVAL || 2
 
+export const erc20TokenAddress = process.env.NEXT_PUBLIC_ERC20_TOKEN_ADDRESS || '0x2058A9D7613eEE744279e3856Ef0eAda5FCbaA7e'
+
 //
 // APP CONFIG
 //
@@ -26,7 +28,7 @@ export const showRequestTokens =
 // https://ipfs.github.io/public-gateway-checker/
 export const ipfsGatewayUri = process.env.NEXT_PUBLIC_IPFS_GATEWAY_URI || 'https://gateway.ipfs.io'
 export const ipfsNodeUri = process.env.NEXT_PUBLIC_IPFS_NODE_URI || 'https://ipfs.infura.io:5001'
-export const correctNetworkId = process.env.NEXT_PUBLIC_CORRECT_NETWORK_ID || '0x13881'
+export const correctNetworkId = process.env.NEXT_PUBLIC_CORRECT_NETWORK_ID || 80001
 export const correctNetworkURL =
   process.env.NEXT_PUBLIC_CORRECT_NETWORK_URL || 'https://matic-mumbai.chainstacklabs.com'
 export const correctNetworkName = process.env.NEXT_PUBLIC_CORRECT_NETWORK_NAME || 'mumbai'
@@ -34,7 +36,7 @@ export const bundleServiceUri =
   process.env.NEXT_PUBLIC_BUNDLE_SERVICE_URI || 'https://defi.v2.bundler.mumbai.nevermined.rocks'
 
 export const sampleUri = '/api/v1/sample'
-export const filecoinUploadUri = '/api/v1/gateway/services/upload/filecoin'
+export const filecoinUploadUri = '/api/v1/node/services/upload/filecoin'
 export const discordUrl = 'https://discord.gg/d8B4BkV3'
 export const networkArray = [
   'bsc',
@@ -48,15 +50,7 @@ export const networkArray = [
 ]
 
 export const categories = [
-  'None',
-  'Borrows',
-  'Deposits',
-  'Liquidations',
-  'Repays',
-  'Redeems',
-  'Flashloans',
-  'Trades',
-  'Liquidity'
+  'Artistic', 'Poap', 'Event', 'Game', 'Thematic'
 ]
 export const protocols = [
   'None',
@@ -99,7 +93,8 @@ export const entitesNames = {
   LENDRED: 'Redeems',
   LENDREP: 'Repays'
 }
-export const docsUrl =
-  process.env.NEXT_PUBLIC_DOCS_URL || 'https://nevermined-io.github.io/defi-marketplace/'
+export const nvmUrl =
+  process.env.NEXT_PUBLIC_DOCS_URL || 'https://nevermined.io'
 export const PROTOCOL_PREFIX = 'ProtocolType'
 export const EVENT_PREFIX = 'EventType'
+

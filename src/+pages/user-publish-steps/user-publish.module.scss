@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .user-publish {
   &__publish-horizontal-line {
     border-top: 2px solid #2b465c;
@@ -108,11 +110,12 @@
     input,
     textarea {
       color: #8aaabe;
+      background-color: #fff;
       font-family: Titillium Web;
+      border: 1px solid $titles;
     }
 
     input {
-      border: none;
       padding: 0 24px;
 
       &:disabled {
@@ -125,13 +128,13 @@
     }
 
     option {
-      background-color: #2b465c;
+      background-color: #fff;
     }
 
     label {
       font-size: 18px;
       line-height: 32px;
-      color: #fff;
+      color: $titles;
     }
   }
 
@@ -186,6 +189,7 @@
     line-height: 16px;
     text-transform: uppercase;
     margin-right: 16px;
+    color: $content;
   }
 
   &__upload-icon {
@@ -194,7 +198,7 @@
     transform: rotate(180deg);
 
     path {
-      fill: #fff;
+      fill: $content;
     }
   }
 

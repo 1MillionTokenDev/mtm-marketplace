@@ -1,3 +1,5 @@
+@import './variables';
+
 body {  
     @supports (background-blend-mode: lighten) {
       background-color: #fff;
@@ -10,17 +12,17 @@ body {
 
 .text {
   &--h1, &--h3, &--h2, &--h4 {
-    color: #006BBC
+    color: $titles
   }
-  &--p, &--span, &--detail {
-    color: #8946D5;
+  &--p, &--span, &--detail, &--caps {
+    color: $content;
   }
 
   &--highlight {
-    color: #479CDC;
+    color: $highlight;
 
     &:hover {
-      color: #006BBC;
+      color: $hover;
     }
   }
 }

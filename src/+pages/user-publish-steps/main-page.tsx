@@ -15,16 +15,17 @@ import {
   RoyaltyKind,
   getRoyaltyScheme,
   AssetRewards,
-  BigNumber
+  BigNumber,
+  MetaData
 } from '@nevermined-io/catalog-core'
+import { useWallet } from '@nevermined-io/catalog-providers'
 import { NextPage } from 'next'
-import { MetaData } from '@nevermined-io/nevermined-sdk-js'
 import { BasicInfoStep } from './basic-info'
-import { DetailsStep } from './details'
 import { FilesStep } from './files'
 import { handleAssetFiles, FileType } from './files-handler'
 import { toast } from '../../components'
-import { neverminedNodeAddress } from 'src/config'
+import { neverminedNodeAddress, erc20TokenAddress, categories } from 'src/config'
+import { PricesStep } from './prices'
 import { ProgressBar } from './progress-bar/progress-bar'
 import styles from './publish-asset.module.scss'
 
@@ -48,20 +49,16 @@ export const UserPublishMultiStep: NextPage = () => {
   const [isProcessComplete, setIsProcessComplete] = useState(false)
   const resultPopupRef = useRef<UiPopupHandlers>()
   const { sdk } = Catalog.useNevermined()
+  const { walletAddress } = useWallet()
 
   useEffect(() => {
     setAssetPublish({
       ...assetPublish,
       category: 'None',
       protocol: 'None',
-      network: 'None',
+      network: 'MTM',
       price: 0,
-      tier: 'Community',
-      notebook_language: 'Python',
-      notebook_requirements: '',
-      notebook_format: 'Source code',
-      report_type: 'Aggregation',
-      report_format: 'CSV'
+      royaltyAmount: 0,
     })
   }, [])
 
@@ -71,18 +68,14 @@ export const UserPublishMultiStep: NextPage = () => {
       name: '',
       author: '',
       description: '',
-      type: 'dataset',
-      category: 'None',
+      type: 'nft-access',
+      category: categories[0],
       protocol: 'None',
-      network: 'None',
+      network: 'polygon',
       price: 0,
-      tier: 'Community',
       assetFiles: [],
-      notebook_language: 'Python',
-      notebook_requirements: '',
-      notebook_format: 'Source code',
-      report_type: 'Aggregation',
-      report_format: 'CSV'
+      cap: BigNumber.from(1),
+      royaltyAmount: 0,
     })
     setFilesUploadedMessage([])
     setErrorAssetMessage('')
@@ -148,43 +141,13 @@ export const UserPublishMultiStep: NextPage = () => {
       additionalInformation: {
         description: assetPublish.description,
         categories: [
-          `ProtocolType:${assetPublish.category}`,
-          `EventType:${assetPublish.protocol}`,
-          `Blockchain:${assetPublish.network}`,
-          `UseCase:defi-datasets`,
-          `Version:v1`
+          assetPublish.category
         ],
         blockchain: assetPublish.network,
         version: 'v1',
         source: 'filecoin'
       }
     } as MetaData
-
-    switch (assetPublish.type) {
-      case 'report':
-        metadata.additionalInformation!.customData = {
-          subtype: assetPublish.type,
-          report_type: assetPublish.report_type,
-          report_format: assetPublish.report_format,
-          tier_name: assetPublish.tier
-        }
-        break
-      case 'notebook':
-        metadata.additionalInformation!.customData = {
-          subtype: assetPublish.type,
-          notebook_language: assetPublish.notebook_language,
-          notebook_requirements: assetPublish.notebook_requirements,
-          notebook_format: assetPublish.notebook_format,
-          tier_name: assetPublish.tier
-        }
-        break
-      default:
-        metadata.additionalInformation!.customData = {
-          subtype: assetPublish.type,
-          tier_name: assetPublish.tier
-        }
-        break
-    }
 
     return metadata
   }
@@ -217,19 +180,30 @@ export const UserPublishMultiStep: NextPage = () => {
       await uploadFiles()
       txPopupRef.current?.open()
 
+      const assetRewardsMap = new Map([
+        [walletAddress, BigNumber.from(assetPublish.price)]
+      ])
+
+      const assetRewards = new AssetRewards(assetRewardsMap)
+
+      const networkFee = await sdk.keeper.nvmConfig.getNetworkFee()
+      const feeReceiver = await sdk.keeper.nvmConfig.getFeeReceiver()
+      assetRewards.addNetworkFees(feeReceiver, BigNumber.from(networkFee))
+
       const royaltyAttributes = {
         royaltyKind: RoyaltyKind.Standard,
         scheme: getRoyaltyScheme(sdk, RoyaltyKind.Standard),
-        amount: 0
+        amount: assetPublish.royaltyAmount
       }
 
       publishNFT1155({
         metadata: generateMetadata(),
         neverminedNodeAddress,
-        assetRewards: new AssetRewards(),
+        assetRewards,
         royaltyAttributes: royaltyAttributes,
         preMint: true,
-        cap: BigNumber.from(100),
+        cap: assetPublish.cap,
+        erc20TokenAddress,
       })
         .then(() => {
           setResultOk(true)
@@ -283,7 +257,7 @@ export const UserPublishMultiStep: NextPage = () => {
         <ProgressBar currentStep={step} totalSteps={3} isProcessComplete={isProcessComplete} />
         <UiForm className={b('step-container')}>
           {step === 1 && <BasicInfoStep nextStep={nextStep} />}
-          {step === 2 && <DetailsStep prevStep={prevStep} nextStep={nextStep} />}
+          {step === 2 && <PricesStep nextStep={nextStep} prevStep={prevStep}/>}
           {step === 3 && (
             <FilesStep
               prevStep={prevStep}

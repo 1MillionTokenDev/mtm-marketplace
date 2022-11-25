@@ -3,7 +3,7 @@ import { BEM, UiDivider, UiLayout, UiText } from '@nevermined-io/styles'
 import Link from 'next/link'
 import Image from 'next/image'
 import styles from './footer.module.scss'
-import { docsUrl } from 'src/config'
+import { nvmUrl } from 'src/config'
 
 const b = BEM('footer', styles)
 
@@ -13,8 +13,9 @@ export function UiFooter() {
       <UiLayout type="container">
         <UiDivider type="xl" />
         <UiLayout className={b('link-row')}>
-          <a href="https://1milliontoken.org/" target="_blank" rel="noopener noreferrer">
-            <Image width="40" height="40" className={b('logo')} src="/assets/million-token-matic.png" />
+          <a href="https://nevermined.io" target="_blank" rel="noopener noreferrer">
+            <Image width="40" height="40" className={b('logo')} src="/assets/nevermined-color.svg" />
+            <UiText className={b("powered")} type='h4' variants={['highlight']}>Powered by Nevermined</UiText>
           </a>
         </UiLayout>
         <UiDivider type="l" />
@@ -35,10 +36,10 @@ export function UiFooter() {
             </a>
           </Link>
           <UiDivider vertical type="l" />
-          <Link href={docsUrl}>
+          <Link href={'https://1milliontoken.org/'}>
             <a target="_blank">
               <UiText className="pointer" type="link-caps" variants={['detail']}>
-                Docs
+                MTM
               </UiText>
             </a>
           </Link>

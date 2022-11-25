@@ -4,6 +4,11 @@
   padding: $size---padding;
   padding-bottom: 0;
 
+  &__powered {
+    vertical-align: bottom;
+    margin-left: 5px;
+  }
+
   &__content {
     border-top: 1px solid gc(gM);
     padding: $size---padding;

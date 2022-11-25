@@ -11,19 +11,5 @@ export function XuiWallet() {
   const { network, isLogged } = React.useContext(User)
   const { walletAddress } = useWallet()
 
-  return !(isLogged && walletAddress) ? (
-    <ConnectKit.ConnectKitButton/>
-  ) : (
-    <>
-      <Link href={'/account'}>
-        <div className={b('block', ['address'])}>
-          <span className={b('logged')} />
-          <span className={b('account')}>Account</span>
-          <span className={b('separator')} />
-          {`${walletAddress.substr(0, 6)}...${walletAddress.substr(-4)}`}
-        </div>
-      </Link>
-      {network && <div className={b('block', ['network'])}>{network}</div>}
-    </>
-  )
+  return <ConnectKit.ConnectKitButton/>
 }

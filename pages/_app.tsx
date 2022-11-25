@@ -1,11 +1,11 @@
 import '@nevermined-io/styles/lib/esm/styles/globals.scss'
 import '@nevermined-io/styles/lib/esm/index.css'
 import '../src/styles/styles.scss'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import type { AppProps } from 'next/app'
 import { Catalog, AuthToken, AssetService } from '@nevermined-io/catalog-core'
-import { WalletProvider, getClient } from '@nevermined-io/catalog-providers'
+import { WalletProvider, getClient, useWallet } from '@nevermined-io/catalog-providers'
 import { Logger } from '@nevermined-io/nevermined-sdk-js'
 import { ethers } from 'ethers'
 import { UiHeader, UiHeaderLink, UiFooter } from 'ui'
@@ -45,6 +45,19 @@ const appConfig = {
   graphHttpUri: graphUrl
 }
 
+const Header = () => {
+  const {walletAddress} = useWallet()
+    return (
+      <UiHeader>
+        <UiHeaderLink href="/list">Marketplace</UiHeaderLink>
+        {walletAddress && <UiHeaderLink href="/account">Account</UiHeaderLink>}
+        <UiHeaderLink href="https://1milliontoken.org/">MTM</UiHeaderLink>
+        <UiHeaderLink href="/about">Why MTM?</UiHeaderLink>
+
+      </UiHeader>
+    )
+}
+
 function App({ Component, pageProps }: AppProps) {
   Logger.setLevel(3)
   const MainComponent = Component as any
@@ -65,6 +78,10 @@ function App({ Component, pageProps }: AppProps) {
       <Catalog.NeverminedProvider config={appConfig}>
         <WalletProvider
           client={getClient()}
+          correctNetworkId={Number(correctNetworkId)}
+          connectKitProps={{
+            theme: 'rounded'
+          }}
         >
           <AssetService.AssetPublishProvider>
             <UserProvider>
@@ -72,12 +89,8 @@ function App({ Component, pageProps }: AppProps) {
                 <meta name="description" content="MTM DeFi Marketplace" />
                 <link rel="icon" href="/favicon.ico" />
               </Head>
-
               <div>
-                <UiHeader>
-                  <UiHeaderLink href="/about">Why MTM?</UiHeaderLink>
-                </UiHeader>
-
+                <Header/>
                 <MainComponent {...pageProps} />
               </div>
 

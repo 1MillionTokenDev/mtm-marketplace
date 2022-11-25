@@ -29,7 +29,6 @@ export function XuiAssetsQuery({
     assets,
     searchInputText,
     selectedCategories,
-    setSelectedNetworks,
     setAssets,
     setSelectedCategories,
     setToDate,
@@ -47,45 +46,62 @@ export function XuiAssetsQuery({
   const [page, setPage] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const selectedCategoriesEvent = selectedCategories.map((cat) => `${subcategoryPrefix}:${cat}`)
-
   const textFilter = {
-    query_string: { query: `*${searchInputText}*`, fields: ['service.attributes.main.name'] }
+    nested: {
+      path: ['service'],
+      query: {
+        query_string: { query: `*${searchInputText}*`, fields: ['service.attributes.main.name'] }
+      }
+    }
   }
-  const datasetCategory = {
-    match: {
-      'service.attributes.additionalInformation.categories':
-        selectedCategoriesEvent.length === 0 ? 'defi-datasets' : selectedCategoriesEvent.join(', ')
+  const categories = { 
+    nested: {
+      path: ['service'],
+      query: {
+        match: {
+          'service.attributes.additionalInformation.categories': selectedCategories.join(', ')
+        }
+      }
     }
   }
   
-  const nftAccess = { match: { 'service.type': 'nft-access' } }
+  const nftAccess = { 
+    nested: {
+      path: ['service'],
+      query: {
+        match: { 'service.type': 'nft-access' } }
+      }
+    }
 
   const dateFilter = fromDate !== '' &&
     toDate !== '' && {
-      range: {
-        'service.attributes.main.dateCreated': {
-          time_zone: '+01:00',
-          gte: fromDate,
-          lte: toDate
+      nested: {
+        path: ['service'],
+        query: {
+          range: {
+            'service.attributes.main.dateCreated': {
+              time_zone: '+01:00',
+              gte: fromDate,
+              lte: toDate
+            }
+          }
         }
       }
     }
 
   // add listed into mustArray once we have a dataset with that property in the metadata
   //  const listed = { match: { 'service.attributes.curation.isListed': 'true' } }
-  const mustArray = [textFilter, datasetCategory, nftAccess]
-  dateFilter && mustArray.push(dateFilter as any)
+  const mustArray = [textFilter, nftAccess]
 
-  const notBundleFilter = {
-    match: { 'service.attributes.additionalInformation.categories': 'EventType:bundle' }
+  if (selectedCategories.length) {
+    mustArray.push(categories as any)
   }
-  const mustNotArray = [notBundleFilter]
+
+  dateFilter && mustArray.push(dateFilter as any)
 
   const query = {
     bool: {
-      must: mustArray,
-      must_not: mustNotArray
+      must: mustArray
     }
   }
 
@@ -149,7 +165,7 @@ export function XuiAssetsQuery({
       .query({
         offset: pageSize,
         page,
-        query: query! as any,
+        query,
         sort: {
           created: 'desc'
         }

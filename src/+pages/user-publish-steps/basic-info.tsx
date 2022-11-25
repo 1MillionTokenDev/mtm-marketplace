@@ -10,12 +10,10 @@ import {
   UiFormSelect,
   BEM
 } from '@nevermined-io/styles'
-import { Catalog } from '@nevermined-io/catalog-core'
 import styles from './user-publish.module.scss'
 import stepStyles from './step-content.module.scss'
 import { AssetService } from '@nevermined-io/catalog-core'
-import { User } from '../../context'
-import { toast } from 'react-toastify'
+import {categories} from 'src/config'
 
 const b = BEM('user-publish', styles)
 const step = BEM('step-container', stepStyles)
@@ -30,12 +28,7 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
   const [authorInputError, setAuthorInputError] = useState('')
   const [nameInputError, setNameInputError] = useState('')
   const [descriptionInputError, setDescriptionInputError] = useState('')
-  const [subscriptionInputError, setSubscriptionInputError] = useState('')
-
-  const [tiers, setTiers] = useState<string[]>([])
-  const subscriptionErrorText =
-    "You don't have any current subscription. Only users with a subscription are allowed to publish"
-  const { isLoadingSDK } = Catalog.useNevermined()
+  const [categoryInputError] = useState('')
 
   const checkValues = (): boolean => {
     if (!assetPublish.author) {
@@ -105,17 +98,14 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
             placeholder="Type a description"
           />
         </UiFormGroup>
-
-        <div className={b('publish-horizontal-line')} />
-
         <UiFormGroup orientation={Orientation.Vertical}>
           <UiFormSelect
-            value={assetPublish.tier}
-            onChange={(e) => handleChange(e as string, 'tier')}
-            options={tiers}
+            value={assetPublish.category}
+            onChange={(e) => handleChange(e as string, 'category')}
+            options={categories}
             className={b('publish-form-select')}
-            label="Subscription"
-            inputError={subscriptionInputError}
+            label="Category"
+            inputError={categoryInputError}
           />
         </UiFormGroup>
 
