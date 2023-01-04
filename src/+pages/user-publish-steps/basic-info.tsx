@@ -1,8 +1,9 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   UiFormGroup,
   UiFormInput,
   UiFormTextarea,
+  UiForm,
   Orientation,
   UiButton,
   UiText,
@@ -14,6 +15,7 @@ import styles from './user-publish.module.scss'
 import stepStyles from './step-content.module.scss'
 import { AssetService } from '@nevermined-io/catalog-core'
 import {categories} from 'src/config'
+import { Access } from '../../shared'
 
 const b = BEM('user-publish', styles)
 const step = BEM('step-container', stepStyles)
@@ -28,7 +30,8 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
   const [authorInputError, setAuthorInputError] = useState('')
   const [nameInputError, setNameInputError] = useState('')
   const [descriptionInputError, setDescriptionInputError] = useState('')
-  const [categoryInputError] = useState('')
+  const [categoryInputError, setCategoryInputError] = useState('')
+  const access = [Access.public, Access.private]
 
   const checkValues = (): boolean => {
     if (!assetPublish.author) {
@@ -44,6 +47,10 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
     if (!assetPublish.description) {
       setDescriptionInputError('Description is required')
       return false
+    }
+
+    if (!assetPublish.category) {
+      setCategoryInputError('Category is required')
     }
 
     return true
@@ -66,7 +73,7 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
         </UiText>
       </div>
       <UiDivider type="l" />
-      <div className={b('form-input')}>
+      <UiForm>
         <UiFormGroup orientation={Orientation.Vertical} className={b('publish-form')}>
           <UiFormInput
             className={b('publish-form-input')}
@@ -98,7 +105,7 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
             placeholder="Type a description"
           />
         </UiFormGroup>
-        <UiFormGroup orientation={Orientation.Vertical}>
+        <UiFormGroup orientation={Orientation.Vertical} className={b('publish-form')}>
           <UiFormSelect
             value={assetPublish.category}
             onChange={(e) => handleChange(e as string, 'category')}
@@ -109,6 +116,16 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
           />
         </UiFormGroup>
 
+        <UiFormGroup orientation={Orientation.Vertical} className={b('publish-form')}>
+          <UiFormSelect
+            value={assetPublish.access}
+            onChange={(e) => handleChange(e as string, 'access')}
+            options={access}
+            className={b('publish-form-select')}
+            label="Access"
+          />
+        </UiFormGroup>
+
         <UiDivider />
 
         <UiFormGroup orientation={Orientation.Vertical}>
@@ -116,7 +133,7 @@ export const BasicInfoStep = (props: BasicInfoProps) => {
             Continue
           </UiButton>
         </UiFormGroup>
-      </div>
+      </UiForm>
     </>
   )
 }

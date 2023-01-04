@@ -22,7 +22,7 @@ export function getDefiInfo({ additionalInformation }: MetaData) {
 
 export function getDdoTokenAddress(ddo: DDO) {
   return ddo
-    .findServiceByType('nft-access')
+    .findServiceByType('nft-sales')
     ?.attributes?.serviceAgreementTemplate?.conditions?.find(({ name }) => name === 'lockPayment')
     ?.parameters?.find(({ name }) => name === '_tokenAddress')?.value
 }

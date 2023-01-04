@@ -6,6 +6,7 @@ export const loadUserPublished = async (
   sdk: Nevermined,
   owner: string
 ): Promise<any | undefined> => {
+  console.log('ENTRO')
   const registered = await sdk.keeper.didRegistry.events.getPastEvents({
     methodName: 'getDIDAttributeRegistereds',
     filterSubgraph: {
@@ -20,6 +21,8 @@ export const loadUserPublished = async (
       _blockNumberUpdated: true
     }
   })
+
+  console.log(registered)
 
   return registered
 }

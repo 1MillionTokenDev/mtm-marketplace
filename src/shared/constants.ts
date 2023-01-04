@@ -59,7 +59,12 @@ export enum SubscriptionTiers {
   Tier1 = 'Community',
   Tier2 = "Analyst",
   Tier3 = "Enterprise"
-} 
+}
+
+export enum Access {
+  public = 'public',
+  private = 'private'
+}
 
 export interface UserSubscription {
   tier: SubscriptionTiers

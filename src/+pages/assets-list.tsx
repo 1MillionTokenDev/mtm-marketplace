@@ -134,6 +134,7 @@ export const AssetsList = () => {
     <div className={b()}>
       <XuiDownloadAsset popupRef={downloadPopupRef} assetDid={assetDid} />
       <NotificationPopup closePopup={closePopup} message={errorMessage} popupRef={popupRef} />
+      
     </div>
   )
 }

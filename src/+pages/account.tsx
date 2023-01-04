@@ -11,7 +11,7 @@ import { loadUserPublished, loadUserDownloads } from 'src/shared/graphql'
 import { Summary } from 'ui/+account/summary'
 import { AssetsList } from './assets-list'
 import Router from 'next/router'
-import { toast } from '../components'
+import {Card} from '../components/card/card'
 
 const b = BEM('account', styles)
 export const Account: NextPage = () => {
@@ -20,24 +20,32 @@ export const Account: NextPage = () => {
   const [downloaded, setDownloaded] = useState<DDO[]>([])
   const { bookmarks, setBookmarks } =
     useContext(User)
-  const { sdk } = Catalog.useNevermined()
+  const { sdk, isLoadingSDK, assets } = Catalog.useNevermined()
   const { walletAddress } = useWallet()
 
   const loadUserInfo = async () => {
-    try{
+    if(isLoadingSDK || !walletAddress) {
+      return
+    }
 
+    try{ 
         const userProfile = await sdk.profiles.findOneByAddress(walletAddress)
-        const bookmarks = await sdk.bookmarks.findManyByUserId(userProfile.userId)
+        // const bookmarks = await sdk.bookmarks.findManyByUserId(userProfile.userId)
 
-        const bookmarksDDO = await Promise.all(
-          bookmarks.results?.map((bookmark) => sdk.assets.resolve(bookmark.did))
-        )
+        // if(bookmarks) {
+        //   const bookmarksDDO = await Promise.all(
+        //     bookmarks.results?.map((bookmark) => sdk.assets.resolve(bookmark.did))
+        //   )
+        //   setBookmarks(bookmarksDDO)
+        // }
 
-        const published = await loadUserPublished(sdk, walletAddress)
-
-        const publishedDDO: DDO[] = await Promise.all(
-          published.map((asset: any) => sdk.assets.resolve(asset._did))
-        )
+        const published = await assets.query({
+          query: {
+            match: {
+              'proof.creator': walletAddress
+            }
+          }
+        })
 
         let downloaded = await loadUserDownloads(sdk, walletAddress)
         downloaded = downloaded.map((asset: any) => asset._did)
@@ -47,8 +55,7 @@ export const Account: NextPage = () => {
           downloaded.map(async (did: any) => await sdk.assets.resolve(did))
         )
 
-      setBookmarks(bookmarksDDO)
-      setPublished(publishedDDO)
+      setPublished(published.results)
       setDownloaded(downloadedDDO)
 
     }catch(error: unknown){
@@ -57,12 +64,17 @@ export const Account: NextPage = () => {
 
   }
 
+  const loadCards = (ddos: DDO[]) => (
+    <UiLayout className={b('card-container')}>
+      {ddos.map(a => (
+          <Card ddo={a} />
+      ))}
+    </UiLayout>
+  )
+
   useEffect(() => {
-    if (!sdk?.profiles) {
-      return
-    }
     loadUserInfo()
-  }, [sdk, walletAddress])
+  }, [walletAddress])
 
   const publishAsset = () => {
     Router.push('/user-publish')
@@ -83,17 +95,15 @@ export const Account: NextPage = () => {
       return (
         <>
           <UiButton onClick={() => publishAsset()}>Publish new asset</UiButton>
-          <AssetsList assets={published} disableBookmarks />
+          {loadCards(published)}
         </>
       )
     } else if (view == 3) {
-      return (
-        <>
-          <AssetsList assets={downloaded} disableBookmarks hideCategoryColumn />
-        </>
-      )
+      return loadCards(downloaded)
+      
+      
     } else if (view == 4) {
-      return <AssetsList assets={bookmarks} />
+      return loadCards(bookmarks)
     }
   }
 

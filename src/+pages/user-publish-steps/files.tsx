@@ -13,7 +13,7 @@ import {
 } from '@nevermined-io/styles'
 import styles from './user-publish.module.scss'
 import stepStyles from './step-content.module.scss'
-import { FileType, checkFilecoinIdExists } from './files-handler'
+import { FileType } from './files-handler'
 import { ProgressPopup } from './progress-popup'
 import { AssetService } from '@nevermined-io/catalog-core'
 import { AssetFile } from '@nevermined-io/catalog-core/dist/node/types'
@@ -114,35 +114,6 @@ export const FilesStep = (props: FilesProps) => {
     setInputError('')
   }
 
-  const addFilecoinID = async () => {
-    if (!newFilecoinID) return
-
-    setPopupMessage(
-      <div className={b('filecoin-container')}>
-        <FilecoinLogoIcon className={b('filecoin-icon')} />
-        <span className={b('filecoin_text')}>Getting info from Filecoin</span>
-      </div>
-    )
-    popupRef.current?.open()
-    await new Promise((f) => setTimeout(f, 500))
-
-    const result = await checkFilecoinIdExists(newFilecoinID)
-    if (!result[0]) {
-      setInputError(
-        'We could not find information of this file in Filecoin or IPFS. Make sure the ID is correct'
-      )
-      popupRef.current?.close()
-      return
-    }
-
-    const assetFile: AssetFile = result[1]
-    setNewFilecoinID('')
-    updateFilesAdded(assetFile)
-    setInputError('')
-
-    popupRef.current?.close()
-  }
-
   const confirm = () => {
     confirmPopupRef.current?.close()
     submit()
@@ -217,21 +188,6 @@ export const FilesStep = (props: FilesProps) => {
           </div>
           <UiDivider type="l" />
           <div className={b('form-input')}>
-            <UiFormGroup orientation={Orientation.Vertical}>
-              <UiFormItem
-                className={b('publish-form-input')}
-                label="Add New File from Filecoin"
-                value={newFilecoinID}
-                onClick={addFilecoinID}
-                onChange={(e) => setNewFilecoinID(e.target.value)}
-                placeholder="Type the Filecoin or IPFS ID of the file"
-                disabled={false}
-                inputError={inputError}
-              />
-            </UiFormGroup>
-            <UiDivider type="l" />
-            <div className={b('separator')}>OR</div>
-            <UiDivider type="l" />
             <UiFormGroup orientation={Orientation.Vertical}>
               <UiFormInput
                 id="computer"

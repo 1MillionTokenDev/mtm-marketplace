@@ -4,11 +4,14 @@ import { Catalog } from '@nevermined-io/catalog-core'
 import { useWallet } from '@nevermined-io/catalog-providers'
 import { SearchQuery } from '@nevermined-io/nevermined-sdk-js'
 
-import { Loader } from '@nevermined-io/styles'
+import { Loader, UiLayout, BEM } from '@nevermined-io/styles'
 import { User } from '../../context'
-import { networkPrefix, subcategoryPrefix } from '../../shared'
+import styles from './assets-query.module.scss'
 import { XuiPagination } from './pagination'
 import { XuiSearchBar } from './search-bar'
+import { Card } from '../card/card'
+
+const b = BEM('assets-query', styles)
 
 interface AssetsQueryProps {
   search?: 'onsite' | 'search-page'
@@ -69,7 +72,7 @@ export function XuiAssetsQuery({
     nested: {
       path: ['service'],
       query: {
-        match: { 'service.type': 'nft-access' } }
+        match: { 'service.type': 'nft-sales' } }
       }
     }
 
@@ -192,6 +195,11 @@ export function XuiAssetsQuery({
       {search && (
         <div>
           <XuiSearchBar />
+          <UiLayout className={b('card-container')}>
+            {assets.map(a => ( 
+                <Card ddo={a} />
+            ))}
+          </UiLayout>
         </div>
       )}
 

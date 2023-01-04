@@ -16,7 +16,7 @@ import {
   getRoyaltyScheme,
   AssetRewards,
   BigNumber,
-  MetaData
+  MetaData,
 } from '@nevermined-io/catalog-core'
 import { useWallet } from '@nevermined-io/catalog-providers'
 import { NextPage } from 'next'
@@ -28,6 +28,7 @@ import { neverminedNodeAddress, erc20TokenAddress, categories } from 'src/config
 import { PricesStep } from './prices'
 import { ProgressBar } from './progress-bar/progress-bar'
 import styles from './publish-asset.module.scss'
+import { Access } from '../../shared'
 
 const b = BEM('publish-asset', styles)
 
@@ -49,29 +50,41 @@ export const UserPublishMultiStep: NextPage = () => {
   const [isProcessComplete, setIsProcessComplete] = useState(false)
   const resultPopupRef = useRef<UiPopupHandlers>()
   const { sdk } = Catalog.useNevermined()
-  const { walletAddress } = useWallet()
+  const { walletAddress, client } = useWallet()
+
+  const getNetwork = async () => {
+    const chainId = await client.connector?.getChainId()
+    return client.chains?.find(c => c.id === chainId)?.name
+  }
 
   useEffect(() => {
-    setAssetPublish({
-      ...assetPublish,
-      category: 'None',
-      protocol: 'None',
-      network: 'MTM',
-      price: 0,
-      royaltyAmount: 0,
-    })
+    (async() => {
+      const network = await getNetwork()
+      setAssetPublish({
+        ...assetPublish,
+        category: categories[0],
+        protocol: 'None',
+        network,
+        price: 0,
+        access: Access.public,
+        royaltyAmount: 0,
+        cap: BigNumber.from(1)
+      })
+    })()
   }, [])
 
-  const resetValues = () => {
+  const resetValues = async () => {
+    const network = getNetwork()
     setStep(1)
     setAssetPublish({
       name: '',
       author: '',
       description: '',
-      type: 'nft-access',
+      type: 'nft-sales',
+      access: Access.public,
       category: categories[0],
       protocol: 'None',
-      network: 'polygon',
+      network,
       price: 0,
       assetFiles: [],
       cap: BigNumber.from(1),
@@ -110,9 +123,9 @@ export const UserPublishMultiStep: NextPage = () => {
     assetPublish.assetFiles.forEach((assetFile: AssetFile, i: number) => {
       const file: FileMetadata = {
         index: i + 1,
-        contentType: assetFile.content_type ? assetFile.content_type : '',
-        url: assetFile.filecoin_id ? assetFile.filecoin_id : '',
-        contentLength: assetFile.size ? assetFile.size : ''
+        contentType: assetFile.content_type || '',
+        url: assetFile.filecoin_id || '',
+        contentLength: assetFile.size || ''
       }
       files.push(file)
     })
@@ -121,6 +134,8 @@ export const UserPublishMultiStep: NextPage = () => {
   }
 
   const generateMetadata = () => {
+    const files = generateFilesMetadata()
+
     const metadata: MetaData = {
       curation: {
         rating: 0,
@@ -136,10 +151,11 @@ export const UserPublishMultiStep: NextPage = () => {
         datePublished: new Date().toISOString().replace(/\.[0-9]{3}/, ''),
         type: 'dataset',
         network: assetPublish.network,
-        files: generateFilesMetadata()
+        files,
       },
       additionalInformation: {
         description: assetPublish.description,
+        link: assetPublish.access === Access.public ? files[0].url : undefined,
         categories: [
           assetPublish.category
         ],
@@ -181,7 +197,7 @@ export const UserPublishMultiStep: NextPage = () => {
       txPopupRef.current?.open()
 
       const assetRewardsMap = new Map([
-        [walletAddress, BigNumber.from(assetPublish.price)]
+        [walletAddress, BigNumber.parseUnits(assetPublish.price.toString(), 6)]
       ])
 
       const assetRewards = new AssetRewards(assetRewardsMap)

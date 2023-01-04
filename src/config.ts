@@ -2,7 +2,7 @@
 // NEVERMINED REMOTE CONNECTIONS
 //
 export const marketplaceUri = process.env.NEXT_PUBLIC_MARKETPLACE_API || 'http://localhost:3100' // next redirections on next.config.js
-export const neverminedNodeUri = process.env.NEXT_PUBLIC_NEVERMINED_NODE_URI || 'https://node.mumbai.public.nevermined.network' // next redirections on next.config.js
+export const neverminedNodeUri = process.env.NEXT_PUBLIC_NEVERMINED_NODE_URI || 'http://localhost:8030' // next redirections on next.config.js
 export const faucetUri = '/api/faucet' // next redirections on next.config.js
 export const neverminedNodeAddress =
   process.env.NEXT_PUBLIC_NEVERMINED_NODE_ADDRESS || '0x5838B5512cF9f12FE9f2beccB20eb47211F9B0bc'
@@ -36,7 +36,7 @@ export const bundleServiceUri =
   process.env.NEXT_PUBLIC_BUNDLE_SERVICE_URI || 'https://defi.v2.bundler.mumbai.nevermined.rocks'
 
 export const sampleUri = '/api/v1/sample'
-export const filecoinUploadUri = '/api/v1/node/services/upload/filecoin'
+export const IPFSUploadUri = '/api/v1/node/services/upload/ipfs'
 export const discordUrl = 'https://discord.gg/d8B4BkV3'
 export const networkArray = [
   'bsc',

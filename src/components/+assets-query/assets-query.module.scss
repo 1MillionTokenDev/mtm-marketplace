@@ -5,6 +5,12 @@ $assets-query__form---size: 64px !default;
 .assets-query {
   $fz: $assets-query__form---size;
 
+  &__card-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
   &__input {
     background: #fff;
     border-top: 1px solid #8946D5;

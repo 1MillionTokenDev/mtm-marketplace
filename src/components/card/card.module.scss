@@ -1,0 +1,62 @@
+@import '../../styles/variables';
+
+.card {
+  &__content {
+    text-align: center;
+    flex-basis: 30%;
+    display: block;
+    border: 1px solid $content;
+    justify-items: center;
+    margin: 50px 10px; 
+
+    span {
+      color: $content;
+    }
+  }
+
+  &__title {
+    justify-content: center;
+  }
+
+  &__image {
+    justify-content: center;
+
+    img {
+      width: 300px;
+      height: 200px;
+    }
+  }
+
+  &__description, &__footer {
+    padding: 0 10px;
+    margin-bottom: 5px;
+  }
+
+  &__description {
+    margin-top: 5px;
+    height: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__footer {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  &__author, &__category {
+    flex-basis: 50%;
+  }
+
+  &__author {
+    justify-content: flex-start;
+  }
+
+  &__category {
+    justify-content: flex-end;
+  }
+
+  &__price {
+    padding: 0 10px;
+  }
+}
